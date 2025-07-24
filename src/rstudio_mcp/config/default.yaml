@@ -1,0 +1,47 @@
+# Default configuration for RStudio MCP Server
+
+# Server settings
+name: "rstudio-mcp"
+version: "1.0.0"
+host: "localhost"
+port: 8080
+debug: false
+auto_start_rstudio: false
+
+# Logging configuration
+logging:
+  level: "INFO"
+  file: "~/.rstudio-mcp/logs/server.log"
+  max_size: "10MB"
+  backup_count: 5
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# RStudio configuration
+rstudio:
+  installation_path: null  # Auto-detect
+  default_r_version: "4.3.0"
+  r_home: null  # Use system default
+
+# Environment management
+environments:
+  default_location: "~/.rstudio-mcp/environments"
+  auto_cleanup: true
+  max_environments: 10
+
+# Security settings
+security:
+  allowed_packages:
+    - "base"
+    - "utils"
+    - "stats"
+    - "graphics"
+    - "datasets"
+    - "methods"
+    - "grDevices"
+  blocked_functions:
+    - "system"
+    - "shell"
+    - "system2"
+    - "Sys.setenv"
+  execution_timeout: 300
+  max_memory_mb: 1024
