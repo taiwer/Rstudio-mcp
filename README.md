@@ -106,26 +106,197 @@ security:
   execution_timeout: 300
 ```
 
+## Integration with AI Coding Assistants
+
+This MCP server is designed to work seamlessly with popular AI coding assistants in RStudio's terminal environment. The server supports the Model Context Protocol (MCP) specification and can be integrated with various AI clients.
+
+### Supported AI Clients
+
+Based on the [MCP client compatibility matrix](llms-full.txt), the following AI coding assistants support MCP integration:
+
+- **Claude Code** - Supports prompts and tools
+- **VS Code GitHub Copilot** - Full MCP support with dynamic tool discovery
+- **Continue** - Supports tools, prompts, and resources
+- **Cursor** - Supports tools via Composer
+- **Cline** - Supports tools and resources
+- **JetBrains AI Assistant** - Supports tools for all JetBrains IDEs
+
+### Configuration for AI Assistants
+
+#### 1. Claude Code Integration
+
+Claude Code can connect to this MCP server to enhance R development workflows:
+
+```json
+{
+  "mcpServers": {
+    "rstudio-mcp": {
+      "command": "rstudio-mcp",
+      "args": ["--config", "~/.rstudio-mcp/config.yaml"],
+      "env": {
+        "RSTUDIO_MCP_DEBUG": "false"
+      }
+    }
+  }
+}
+```
+
+#### 2. VS Code GitHub Copilot
+
+Configure in VS Code settings or workspace settings:
+
+```json
+{
+  "github.copilot.chat.mcp.servers": {
+    "rstudio-mcp": {
+      "command": "rstudio-mcp",
+      "args": ["--stdio"],
+      "env": {
+        "RSTUDIO_MCP_CONFIG": "~/.rstudio-mcp/config.yaml"
+      }
+    }
+  }
+}
+```
+
+#### 3. Continue Extension
+
+Add to your Continue configuration (`~/.continue/config.json`):
+
+```json
+{
+  "mcpServers": [
+    {
+      "name": "rstudio-mcp",
+      "command": "rstudio-mcp",
+      "args": ["--stdio"],
+      "env": {
+        "RSTUDIO_MCP_CONFIG": "~/.rstudio-mcp/config.yaml"
+      }
+    }
+  ]
+}
+```
+
+#### 4. RStudio Terminal Integration
+
+To use with AI assistants directly in RStudio's terminal:
+
+1. **Start the MCP server in the background:**
+
+   ```bash
+   # In RStudio Terminal
+   rstudio-mcp --daemon --port 3000
+   ```
+
+2. **Configure your AI assistant to connect via SSE:**
+
+   ```bash
+   # Server endpoint for SSE connections
+   http://localhost:3000/sse
+   ```
+
+3. **Available tools in RStudio context:**
+   - `create_environment` - Create R environments
+   - `execute_r_code` - Run R code with result capture
+   - `create_project` - Create RStudio projects
+   - `install_package` - Manage R packages
+   - `get_project_info` - Access project metadata
+
+### Environment Variables
+
+Set these environment variables for optimal integration:
+
+```bash
+# RStudio MCP Configuration
+export RSTUDIO_MCP_CONFIG="~/.rstudio-mcp/config.yaml"
+export RSTUDIO_MCP_LOG_LEVEL="INFO"
+export RSTUDIO_MCP_PORT="3000"
+
+# R Environment
+export R_HOME="/usr/local/lib/R"
+export R_LIBS_USER="~/.rstudio-mcp/libraries"
+```
+
+### Usage Examples
+
+#### With Claude Code in RStudio Terminal
+
+```bash
+# Start MCP server
+rstudio-mcp --daemon
+
+# Claude Code can now:
+# - Create R environments: "Create a new R environment for data analysis"
+# - Execute R code: "Run this statistical analysis and show results"
+# - Manage projects: "Set up a new RStudio project for machine learning"
+```
+
+#### With GitHub Copilot in VS Code
+
+```bash
+# In VS Code terminal connected to RStudio server
+# Copilot can access:
+# - R workspace objects via rstudio-workspace:// resources
+# - Project files via rstudio-project:// resources
+# - Environment info via rstudio-environment:// resources
+# - Generated plots via rstudio-plot:// resources
+```
+
+### Troubleshooting
+
+1. **Connection Issues:**
+
+   ```bash
+   # Check if MCP server is running
+   rstudio-mcp --status
+
+   # Test connection
+   curl http://localhost:3000/health
+   ```
+
+2. **Permission Issues:**
+
+   ```bash
+   # Ensure proper permissions
+   chmod +x $(which rstudio-mcp)
+   chown -R $USER ~/.rstudio-mcp/
+   ```
+
+3. **R Environment Issues:**
+
+   ```bash
+   # Verify R installation
+   rstudio-mcp --check-r
+
+   # Reset environments
+   rstudio-mcp --reset-environments
+   ```
+
 ## MCP Tools
 
 The server provides the following MCP tools:
 
 ### Environment Management
+
 - `create_environment`: Create a new R environment
 - `list_environments`: List all available environments
 - `switch_environment`: Switch to a different environment
 - `delete_environment`: Delete an environment
 
 ### Code Execution
+
 - `execute_r_code`: Execute R code in a specified environment
 - `get_execution_history`: Get history of executed code
 
 ### Project Management
+
 - `create_project`: Create a new RStudio project
 - `open_project`: Open an existing project
 - `get_project_info`: Get project information
 
 ### Package Management
+
 - `install_package`: Install R packages
 - `update_package`: Update packages
 - `list_packages`: List installed packages
@@ -152,7 +323,7 @@ Pre-built prompts for common R development tasks:
 
 ### Project Structure
 
-```
+```text
 rstudio-mcp/
 ├── src/rstudio_mcp/          # Main package
 │   ├── __init__.py
