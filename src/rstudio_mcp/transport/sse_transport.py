@@ -360,8 +360,13 @@ class SSETransport(TransportBase):
 
     def _setup_routes(self) -> None:
         """Set up HTTP routes."""
+        # SSE endpoint for MCP communication
         self.app.router.add_get("/sse", self._handle_sse_connection)
         self.app.router.add_post("/message", self._handle_message_post)
+
+        # Status and health endpoints (different purposes):
+        # - /health: Simple health check for load balancers/monitoring
+        # - /status: Detailed operational status with connection info
         self.app.router.add_get("/status", self._handle_status)
         self.app.router.add_get("/health", self._handle_health)
         self.app.router.add_get("/connections", self._handle_connections_info)
