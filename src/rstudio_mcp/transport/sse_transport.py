@@ -11,6 +11,7 @@ from urllib.parse import parse_qs, urlparse
 from aiohttp import WSMsgType, web
 from aiohttp.web import Request, Response, StreamResponse
 
+from .. import __version__
 from .transport_base import ConnectionState, TransportBase
 
 
@@ -481,7 +482,7 @@ class SSETransport(TransportBase):
             {
                 "status": "healthy",
                 "server": "rstudio-mcp",
-                "version": "1.0.0",
+                "version": __version__,
                 "timestamp": time.time(),
                 "transport": "sse",
                 "connections": self.connection_manager.get_connection_count(),

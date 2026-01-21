@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 from typing import Optional
 
+from . import __version__
 from .config import ServerConfig
 from .logging_config import get_logger
 from .server import RStudioMCPServer
@@ -48,7 +49,9 @@ Examples:
         help="Create default configuration file and exit",
     )
 
-    parser.add_argument("--version", "-v", action="version", version="%(prog)s 1.0.0")
+    parser.add_argument(
+        "--version", "-v", action="version", version=f"%(prog)s {__version__}"
+    )
 
     parser.add_argument(
         "--mode",
