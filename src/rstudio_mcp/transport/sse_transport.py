@@ -8,7 +8,7 @@ import uuid
 from typing import Any, Dict, List, Optional, Set
 from urllib.parse import parse_qs, urlparse
 
-from aiohttp import WSMsgType, web
+from aiohttp import web
 from aiohttp.web import Request, Response, StreamResponse
 
 from .. import __version__
@@ -337,7 +337,7 @@ class SSETransport(TransportBase):
     """SSE transport implementation."""
 
     def __init__(
-        self, host: str = "localhost", port: int = 8080, heartbeat_interval: int = 30
+        self, host: str = "localhost", port: int = 3000, heartbeat_interval: int = 30
     ):
         """Initialize SSE transport.
 
