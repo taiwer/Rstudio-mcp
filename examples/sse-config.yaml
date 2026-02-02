@@ -1,0 +1,70 @@
+# RStudio MCP Server - SSE Mode Configuration Example
+# This configuration is optimized for running the server in SSE (Server-Sent Events) mode
+
+# Server settings
+name: "rstudio-mcp"
+version: "1.0.0"
+debug: false
+
+# SSE server configuration
+host: "0.0.0.0"  # Listen on all interfaces (use "localhost" for local only)
+port: 3000        # SSE server port
+
+# Logging configuration
+logging:
+  level: "INFO"  # Set to "DEBUG" for verbose logging
+  file: "~/.rstudio-mcp/logs/sse-server.log"
+  max_size: "10MB"
+  backup_count: 5
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# RStudio configuration
+rstudio:
+  installation_path: null  # Auto-detect RStudio installation
+  default_r_version: "4.3.0"
+  r_home: null  # Auto-detect R installation
+
+# Environment management
+environments:
+  default_location: "~/.rstudio-mcp/environments"
+  auto_cleanup: true
+  max_environments: 10
+
+# Security settings
+security:
+  # Allowed R packages
+  allowed_packages:
+    - "base"
+    - "utils"
+    - "stats"
+    - "graphics"
+    - "datasets"
+    - "methods"
+    - "grDevices"
+    - "tools"
+    
+  # Blocked R functions for security
+  blocked_functions:
+    - "system"
+    - "shell"
+    - "system2"
+    
+  # Execution limits
+  execution_timeout: 300  # 5 minutes max execution time
+  max_memory_mb: 1024     # 1GB memory limit
+
+# Auto-start RStudio (optional)
+auto_start_rstudio: false
+
+# Usage:
+# Run the server with this configuration:
+#   rstudio-mcp --mode sse --config examples/sse-config.yaml
+#
+# Or override specific settings:
+#   rstudio-mcp --mode sse --config examples/sse-config.yaml --port 8080 --debug
+#
+# Access endpoints:
+#   SSE endpoint:    http://localhost:3000/sse
+#   Health check:    http://localhost:3000/health
+#   Server status:   http://localhost:3000/status
+#   Connections:     http://localhost:3000/connections

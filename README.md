@@ -54,6 +54,10 @@ nano ~/.rstudio-mcp/config.yaml
 
 ### 3. Run the Server
 
+#### stdio Mode (Default)
+
+The default mode uses standard input/output for MCP communication, suitable for local integration with AI assistants:
+
 ```bash
 # Run with default configuration
 rstudio-mcp
@@ -65,6 +69,30 @@ rstudio-mcp --config /path/to/config.yaml
 rstudio-mcp --debug
 ```
 
+#### SSE Mode (Server-Sent Events)
+
+SSE mode runs the server as an HTTP service, enabling remote connections and web-based integrations:
+
+```bash
+# Run in SSE mode (default port 3000)
+rstudio-mcp --mode sse
+
+# Run in SSE mode with custom host and port
+rstudio-mcp --mode sse --host 0.0.0.0 --port 8080
+
+# Run in SSE mode with debug logging
+rstudio-mcp --mode sse --debug
+
+# Combine with custom configuration
+rstudio-mcp --mode sse --config /path/to/config.yaml --port 8080
+```
+
+**SSE Endpoints:**
+- `http://localhost:3000/sse` - MCP communication endpoint
+- `http://localhost:3000/health` - Health check endpoint
+- `http://localhost:3000/status` - Server status and connection info
+- `http://localhost:3000/connections` - Active connection details
+
 ## Configuration
 
 The server uses YAML configuration files. Here's an example configuration:
@@ -74,6 +102,8 @@ The server uses YAML configuration files. Here's an example configuration:
 name: "rstudio-mcp"
 version: "1.0.0"
 debug: false
+host: "localhost"  # SSE server host
+port: 3000         # SSE server port
 
 # Logging configuration
 logging:
@@ -105,6 +135,14 @@ security:
     - "shell"
   execution_timeout: 300
 ```
+
+**Configuration Options:**
+- `host`: Server host address (default: "localhost") - used in SSE mode
+- `port`: Server port number (default: 3000) - used in SSE mode
+- `debug`: Enable debug mode with verbose logging
+- `logging.level`: Log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+
+See `examples/sse-config.yaml` for an SSE-specific configuration example.
 
 ## Integration with AI Coding Assistants
 
